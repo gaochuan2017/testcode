@@ -31,7 +31,8 @@ def play_bbox(src,label,save):
                 cv2.polylines(image,[pts],1,(0,0,255),2)
 #        cv2.imshow("a",image)
 #        cv2.waitKey(0)
-        cv2.imwrite("result.jpg",image)
+        if save=True:
+            cv2.imwrite("result.jpg",image)
 
 if __name__ == "__main__":
     play_bbox(src="image/P2598.png",label="image/P2598.txt",save=True)
