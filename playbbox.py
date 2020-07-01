@@ -15,10 +15,24 @@ def test_play():
     img=cv2.imwrite("test.jpg",img)
     pass
 
-def play_bbox():
-
-    return
+def play_bbox(src,label,save):
+    image=cv2.imread(src)
+    with open(label) as f:
+        lines=f.readlines()
+#        list(map(print,lines))
+        for l in lines:
+            l=l.strip().split(' ')
+            print(l)
+            if(len(l)==10):
+                pts=np.array([[l[0],l[1]],
+                              [l[2],l[3]],
+                              [l[4],l[5]],
+                              [l[6],l[7]]],dtype='int32')
+                cv2.polylines(image,[pts],1,(0,0,255),2)
+#        cv2.imshow("a",image)
+#        cv2.waitKey(0)
+        cv2.imwrite("result.jpg",image)
 
 if __name__ == "__main__":
-    
-    return
+    play_bbox(src="image/P2598.png",label="image/P2598.txt",save=True)
+
