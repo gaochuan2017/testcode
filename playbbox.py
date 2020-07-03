@@ -27,13 +27,16 @@ def play_bbox(src,label,save):
                 pts=np.array([[l[0],l[1]],
                               [l[2],l[3]],
                               [l[4],l[5]],
-                              [l[6],l[7]]],dtype='int32')
+                              [l[6],l[7]]],dtype='float32').astype(np.int32)
                 cv2.polylines(image,[pts],1,(0,0,255),2)
-#        cv2.imshow("a",image)
-#        cv2.waitKey(0)
-        if save=True:
+        cv2.imshow("b.jpg",image)
+        cv2.waitKey(0)
+        if save==True:
             cv2.imwrite("result.jpg",image)
 
 if __name__ == "__main__":
-    play_bbox(src="image/P2598.png",label="image/P2598.txt",save=True)
+    #play_bbox(src="image/P1888__1__0___0.png",label="image/P1888__1__0___0.txt",save=True)
+    #play_bbox(src="image/P2598.png",label="image/P2598.txt",save=True)
+    play_bbox(src="image/P0706__1__0___0.png",label="image/P0706__1__0___0.txt",save=True)
+    
 
