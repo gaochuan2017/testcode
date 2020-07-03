@@ -28,7 +28,7 @@ if __name__ == "__main__":
     #pts=order_points(pts)
     pts=cv2.convexHull(pts)
     #pts=pts.reshape(-1,1,2,)
-    print(pts.shape)
+    print(pts)
     for i in range(pts.shape[0]):
         x,y=pts[i][0][0],pts[i][0][1]
         cv2.circle(image,(x,y),3,color=(0,0,255),thickness=-1)
