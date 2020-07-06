@@ -3,10 +3,24 @@ import numpy as np
 import cv2
 import os
 import math
-img_file_dir="/home/gaochuan/object_detection/dataset/dota_8p/images"
-label_file_dir="/home/gaochuan/object_detection/dataset/dota_8p/labels"
-new_label_file_dir="/home/gaochuan/object_detection/dataset/dota_8p/labels_xywha"
-
+img_file_dir="/home/gaochuan/object_detection/dataset/dota_8p/train/images"
+label_file_dir="/home/gaochuan/object_detection/dataset/dota_8p/train/labels_origin"
+new_label_file_dir="/home/gaochuan/object_detection/dataset/dota_8p/train/labels"
+label_names=["plane",
+            "ship",
+            "storage-tank",
+            "baseball-diamond",
+            "tennis-court",
+            "basketball-court",
+            "ground-track-field",
+            "harbor",
+            "bridge",
+            "large-vehicle",
+            "small-vehicle",
+            "helicopter",
+            "roundabout",
+            "soccer-ball-fields",
+            "swimming-pool"]
 def draw_poly_in_picture(image,pts=None,rect=None,color=(250,0,225)):  
     if(pts is not None):
         cv2.polylines(image,[pts],True,color,1)
@@ -35,20 +49,20 @@ def xyxy2rect(l1):#transfer a line of xyxy to rect
     #print(rect)
     return rect
 
-def write_rect(filename,rect,label):
+def write_rect(filename,rect,label,label_names,img_size):
     if(not os.path.exists(new_label_file_dir)):
         os.mkdir(new_label_file_dir)
-    x=int(rect[0][0])
-    y=int(rect[0][1])
-    w=int(rect[1][0])
-    h=int(rect[1][1])      
+    x=float(rect[0][0]/img_size)
+    y=float(rect[0][1]/img_size)
+    w=float(rect[1][0]/img_size)
+    h=float(rect[1][1]/img_size)      
     theta=rect[2]/180*math.pi
     if(w<h):
         theta=theta+math.pi/2
     elif(theta<-1*math.pi/4):
         theta+=math.pi           
     with open(filename,'a') as f:
-        f.write("%s %d %d %d %d %g\n"%(label,x,y,w,h,theta))
+        f.write("%g %g %g %g %g %g\n"%(label_names.index(label),x,y,w,h,theta))
 
 if __name__ == "__main__":
     labeltxts=[]
@@ -85,7 +99,11 @@ if __name__ == "__main__":
                 #draw rect into picture
                 draw_poly_in_picture(image=image,rect=rect,color=color)
                 #write result into .txt
-                write_rect(filename=filename,rect=rect,label=label_cur)
+                write_rect(filename=filename,
+                            rect=rect,
+                            label=label_cur,
+                            label_names=label_names,
+                            img_size=1024)
             #show the rect in the picture
             cv2.imshow("pts.jpg",image)
             cv2.waitKey(0)
