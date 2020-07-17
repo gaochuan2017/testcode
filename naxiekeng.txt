@@ -1,0 +1,69 @@
+###########安1604系统
+1./boot 分区 按照攻略的说法只需要200M，实际上根本不够；安16时候就报了错，事实证明2g才够
+2.swap 分区，大于等于自己机器的内存
+3.安全启动模式或者叫安全引导模式，secure boot模式必须关闭，不然安不了英伟达驱动。关闭的时候一并删除自带密钥。
+4.尽量装英文系统，装中文切换到server模式就出各种乱码，报错的信息都看不到。。。。。还得费劲调语言
+5.如果把系统装入固态硬盘，要进BIOS设置AHCI模式，还要4K对齐
+6.系统装错了如果要删除，可以用这个办法：进windows删除所在盘，然后用移动硬盘里的easyuefi软件把ubuntu的引导一并删去
+7.安英伟达的驱动后面要加一大堆参数，不然无限登陆界面；而且那个.run的文件不能跟二进制bin文件那样的运行 必须用shell命令 sh+文件名 否则就算分配了x，r，w权限一样运行不了
+8.驱动提前下载到U盘里，但是server模式下U盘还不能直接读取，需要手动挂载，挂载的方法先用个命令查U盘的名字 比如sgb4，然后挂载到一个文件夹里 才能执行安装
+9.选择联网安装，到最后一个执行安装后的触发器 update-notifier-common 就卡死了，说是断网以后过几十分钟就好了，猜想可以选择不联网安装可以避免等半个小时
+10.安了系统以后进去分辨率不对，因为自带的第三方驱动没有禁用，需要在安装开始选install ubuntu的那个地方按E进去输个什么参数
+11.uefi模式不能参照旧的启动源方法进行安装，可以参考这篇《UEFI启动模式下安装Ubuntu 16.04教程》，但是分配引导空间那部分不要采纳，还是挂载 /boot 。
+
+######安装显卡驱动
+1.总体参考这篇《Ubuntu16.04 安装NVIDIA英伟达驱动教程 及常见几种报错Error的解决方案》CSDN文章最后的步骤，缺漏就是必须关闭 secure boot.
+
+######################cuda
+1.cuda 9.0自带显卡驱动，但是384.11版本和2080显卡不兼容;所以不能选用deb文件自动安装，只能用runfile源码安装.安装的时候一路accept yes，只是有一处问你是否安装nvidia drive ,一定选no。其他的按照CSDN攻略《Ubuntu16.04搭建GTX1080+CUDA9.0+cuDNN7.0.4+Tensorflow1.6.0环境》2018-3-20的文章，缺点就是bashrc文件修改这部分 有更好的办法，在《Ubuntu17.04+1080ti+cuda9+cudnn7+tensorflow1.4/1.3配置》这篇文章中。这篇文章还给除了cuda安装后的测试方法。唯一的美中不足就是这篇文章对bashrc的修改只是针对cuda9.0而不是所有cuda版本。最好的方法是https://blog.csdn.net/qq_17550379/article/details/79592788里面提到的方法，一劳永逸，以后即使更换cuda版本也不用再次修改bashrc文件了
+
+注意的是 切换cuda版本的时候要 执行这两句：
+sudo rm -rf /usr/local/cuda
+sudo ln -s /usr/local/cuda-8.0 /usr/local/cuda
+
+
+########cudnn
+1 基本参考《https://blog.csdn.net/weixin_41864878/article/details/79621210》这篇文章的步骤，包含了安装之后的测试步骤。必须注意的是这篇基于cunda7.04版本安装，但是现在7.04已经不适用linux，要下载7.05版本的 参考这篇文章也可以，步骤基本是一样的https://blog.csdn.net/m0_37192554/article/details/81032426
+2 python,tensorflow,cudnn,cuda版本有对应关系，见这个网址：https://blog.csdn.net/omodao1/article/details/83241074 
+
+########tensorflow
+1 不能直接pip intall tensorflow-gpu,因为这么默认按照cuda版本选择tensorflow版本，大概率不是想要的版本 cuda 9.0 对应只是tensorflow 1.2
+
+###################输入法
+1.安装系统的时候选中文系统，可以后续改为英文系统以防服务器模式出现乱码。方法是sudo nano /etc/default/locale ctrl+o to save,ctrl+x to quit. 进去以后把zh.CN改为en.US. 然后 打一句命令locale-gen en_US.UTF-8命令，reboot以后已经是英文模式
+
+2.1604中文系统进去以后有fcitx,设置->语言支持，键盘输入法系统选fcitx.
+
+################cmake3.9.2安装方法
+1 wget https://cmake.org/files/v3.9/cmake-3.9.2.tar.gz 下载源码
+2 tar -zxvf cmake-3.9.2.tar.gz 解压缩
+3 cd camke-3.9.2
+  ./configure #进行安装配置
+4 sudo make
+5 sudo make install
+6 cmake --version #检查是否安装成功
+7 ln -s /usr/local/bin/cmake /usr/bin #建立软链接
+
+##############opencv
+1.libtiff4-dev包找不到可供使用的安装包，改为安装libtif5-dev。不要安装libtiff5-i386，因为这个是给32位版本使用的。这类问题可能用google英文搜索更可能找到答案。
+
+
+###############tensorflow-gpu####################
+1.推荐是在虚拟环境里安装。tensorflow有用python2.7和3.4两种方式来安装的。如果手动从官网下包，注意选cp27的对应python27.更好的办法是用命令安，但是可能下载非常慢，就需要加个参数，换一个软件源来下载。见第三条。卸载的时候，还是进入虚拟环境，不用sudo，直接 pip uninstall tensorflow-gpu==1.2就卸载了。
+2.source ~/tensorflow/bin/activate 用这个命令进入vituralenv虚拟环境，用deactivate命令推出。
+3.用上面的命令进入虚拟环境以后，再用这个命令pip install -i https://pypi.tuna.tsinghua.edu.cn/simple tensorflow-gpu==1.2下载对应版本的tensorflow-gpu.
+
+
+
+##############2019-03028################
+autoremove 命令，导致显卡驱动不能用了
+查看了一下现在的cudnn版本：6.0.21
+cuda 版本：8.0.61
+eigen 版本 3.3.4
+tensorflow 版本1.4.0
+numpy 版本1.15.4
+python 2.7.12
+
+##############2019-0328####################
+重新安装了驱动以后，重启又出现了那个配置不正确的问题，还是老办法，先启动windows再进入ubuntu。但是开机以后总是有个检测到错误的报告。
+配置不正确的问题可能是因为安驱动的过程中 x-org是否安装选了yes的问题 。具体参考这篇CSDN博文《最全面解析 Ubuntu 16.04 安装nvidia驱动 以及各种错误》
