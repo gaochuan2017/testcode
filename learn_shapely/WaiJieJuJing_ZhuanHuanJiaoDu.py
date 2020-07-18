@@ -3,9 +3,12 @@ import numpy as np
 import cv2
 import os
 import math
-img_file_dir="/home/gaochuan/object_detection/dataset/dota_8p/train/images"
-label_file_dir="/home/gaochuan/object_detection/dataset/dota_8p/train/labels_origin"
-new_label_file_dir="/home/gaochuan/object_detection/dataset/dota_8p/train/labels"
+image_size = 512
+img_file_dir="/home/gaochuan/object_detection/dataset/dota_512/dota_512_split/train/images"
+#label_file_dir="/home/gaochuan/object_detection/dataset/dota_8p/train/labels_origin"
+label_file_dir="/home/gaochuan/object_detection/dataset/dota_512/dota_512_split/train/labelTxt"
+#new_label_file_dir="/home/gaochuan/object_detection/dataset/dota_8p/train/labels"
+new_label_file_dir="/home/gaochuan/object_detection/dataset/dota_512/dota_512_split/train/labels"
 label_names=["plane",
             "ship",
             "storage-tank",
@@ -19,7 +22,7 @@ label_names=["plane",
             "small-vehicle",
             "helicopter",
             "roundabout",
-            "soccer-ball-fields",
+            "soccer-ball-field",
             "swimming-pool"]
 def draw_poly_in_picture(image,pts=None,rect=None,color=(250,0,225)):  
     if(pts is not None):
@@ -49,7 +52,7 @@ def xyxy2rect(l1):#transfer a line of xyxy to rect
     #print(rect)
     return rect
 
-def write_rect(filename,rect,label,label_names,img_size):
+def write_rect(filename,rect,label,label_names,img_size,new_label_file_dir):
     if(not os.path.exists(new_label_file_dir)):
         os.mkdir(new_label_file_dir)
     x=float(rect[0][0]/img_size)
@@ -64,7 +67,7 @@ def write_rect(filename,rect,label,label_names,img_size):
     with open(filename,'a') as f:
         f.write("%g %g %g %g %g %g\n"%(label_names.index(label),x,y,w,h,theta))
 
-if __name__ == "__main__":
+def generate_xywha(img_file_dir,label_file_dir,new_label_file_dir,image_size):
     labeltxts=[]
     images=[]
     for (d1,d2,d3) in os.walk(img_file_dir):
@@ -103,10 +106,19 @@ if __name__ == "__main__":
                             rect=rect,
                             label=label_cur,
                             label_names=label_names,
-                            img_size=1024)
+                            img_size=image_size,
+                            new_label_file_dir=new_label_file_dir)
             #show the rect in the picture
             cv2.imshow("pts.jpg",image)
             cv2.waitKey(0)
+
+if __name__ == "__main__":
+    generate_xywha(img_file_dir      = img_file_dir,
+                   label_file_dir    = label_file_dir,
+                   new_label_file_dir= new_label_file_dir,
+                   image_size        = image_size)
+
+
 
 
 
