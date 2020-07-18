@@ -99,15 +99,19 @@ def generate_xywha(img_file_dir,label_file_dir,new_label_file_dir,image_size):
                 l=l[0:-2]
                 #turn xyxy to xywha
                 rect=xyxy2rect(l)
-                #draw rect into picture
+                # draw orginal xyxy in img with color red
+                draw_poly_in_picture(image=image,
+                                pts=np.array(l,dtype='float32').astype(np.int32).reshape(-1,2),
+                                color=(0,0,255))
+                #draw rect into picture with blue or yellow(difficult>1)
                 draw_poly_in_picture(image=image,rect=rect,color=color)
                 #write result into .txt
-                write_rect(filename=filename,
+                '''write_rect(filename=filename,
                             rect=rect,
                             label=label_cur,
                             label_names=label_names,
                             img_size=image_size,
-                            new_label_file_dir=new_label_file_dir)
+                            new_label_file_dir=new_label_file_dir)'''
             #show the rect in the picture
             cv2.imshow("pts.jpg",image)
             cv2.waitKey(0)
