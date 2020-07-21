@@ -42,6 +42,7 @@ def gt_anchor_iou(anchors,t,anchor_theta):
     gtheta = t[:,6].view(-1,1) #grid theta 'ccc'
     gij = (gxy - 0).long()
     gi, gj = gij.T  # grid xy indices
+    print(gxy,gij)
     boxes_2 = torch.cat((gxy - gij, gwh), 1)
     area1 = boxes_1[:,2] * boxes_1[:,3]
     area2 = boxes_2[:,2] * boxes_2[:,3]
@@ -84,10 +85,11 @@ if __name__ == "__main__":
     anchor_theta = torch.Tensor([0,0,0]).reshape(-1,1)
     c=torch.FloatTensor([[300,300,200,100,0],[300,300,200,100,0]])
     d=torch.FloatTensor([[300,300,100,200,0],[300,300,100,100,0]])
-    
-    a = torch.randn(3,2).clamp(min = 0.2)
-    b = torch.randn(5,7)
+
+    a = 10*torch.rand(3,2).clamp(min = 0.2)
+    b = 10*torch.rand(5,7)
     b[:,4:6] = b[:,4:6].clamp(min = 0.2)
-    print(b)
+    b[:,2:4] = b[:,2:4].clamp(min = 0.0)
+    print(a,b)
     gt_anchor_iou(a,b,anchor_theta=anchor_theta)
     #print("box_iou = ",box_iou(a[:,2:6],b[:,2:6]))

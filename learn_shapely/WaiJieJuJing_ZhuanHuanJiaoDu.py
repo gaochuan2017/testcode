@@ -62,6 +62,9 @@ def write_rect(filename,rect,label,label_names,img_size,new_label_file_dir):
     theta=rect[2]/180*math.pi
     if(w<h):
         theta=theta+math.pi/2
+        temp = w
+        w = h
+        h = temp
     elif(theta<-1*math.pi/4):
         theta+=math.pi           
     with open(filename,'a') as f:

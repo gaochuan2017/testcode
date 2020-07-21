@@ -1,12 +1,18 @@
 import numpy as np
 import torch
 import math
-a=np.random.randint(0,100,(3,4),dtype=np.int8)
+a=np.random.randint(0,100,(2,3,2),dtype=np.int8)
 print(a)
 ap=torch.from_numpy(a)
+'''
 print("ap = ",ap)
 print("ap[:,None] = ",ap[None])
 print("ap[:,None].shape = ",ap[None].shape)
+'''
+print(ap[:,:,0].shape)
+print(ap[:,:,0])
+print(ap[...,0].shape)
+print(ap[...,0])
 
 
 '''
