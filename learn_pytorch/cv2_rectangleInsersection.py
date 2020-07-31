@@ -1,6 +1,6 @@
 import cv2
 import torch
-import math
+
 def rt_bbox_iou(boxes1,boxes2):
     # input format is xywha
     # Returns the IoU of box1 to box2. box1 is nx5, box2 is nx5,return is 1xn
@@ -80,7 +80,6 @@ def box_iou(box1, box2):
 
 if __name__ == "__main__":
 #    a=torch.FloatTensor([[200,100,-30],[0,0,300,300,200,100,-30]])
-    '''
     a=torch.FloatTensor([[200,100],[200,100]])
     b=torch.FloatTensor([[0,0,0.5,0.5,100,200,240],[0,0,0.5,0.5,100,100,-30]])
     anchor_theta = torch.Tensor([0,0,0]).reshape(-1,1)
@@ -93,7 +92,4 @@ if __name__ == "__main__":
     b[:,2:4] = b[:,2:4].clamp(min = 0.0)
     print(a,b)
     gt_anchor_iou(a,b,anchor_theta=anchor_theta)
-    '''
-    a = torch.Tensor([[400,400,300,100,60]])
-    b = torch.Tensor([[400,400,100,300,-30]])
-    print("box_iou = ",rt_bbox_iou(a,b))
+    #print("box_iou = ",box_iou(a[:,2:6],b[:,2:6]))
