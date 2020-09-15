@@ -3,12 +3,31 @@ import numpy as np
 import torch
 import math
 import os
+'''
 image_size = 1024
 img_file_dir = "/home/gaochuan/111/images"
 label_file_dir = "/home/gaochuan/111/labels"
 new_label_file_dir = "/home/gaochuan/111/newlabtxt"
 # new_img_dir stores image that has been plotted bbox
 new_img_dir = "/home/gaochuan/111/newimg"
+'''
+'''
+image_size = 512
+#img_file_dir="/home/gaochuan/object_detection/dataset/dota_8p/train/images"
+img_file_dir="/home/gaochuan/object_detection/dataset/dota_512/dota_512_split/train/images"
+#label_file_dir="/home/gaochuan/object_detection/dataset/dota_8p/train/labels_origin"
+label_file_dir="/home/gaochuan/object_detection/dataset/dota_512/dota_512_split/train/labelTxt"
+#new_label_file_dir="/home/gaochuan/object_detection/dataset/dota_8p/train/labels"
+new_label_file_dir="/home/gaochuan/object_detection/dataset/dota_512/dota_512_split/train/labels"
+new_img_dir = "/home/gaochuan/object_detection/dataset/dota_512/dota_512_split/train/plot_labels"
+'''
+
+image_size = 1024
+img_file_dir = "/home/gaochuan/object_detection/dataset/dota_mini/dotamini_split/images"
+label_file_dir = "/home/gaochuan/object_detection/dataset/dota_mini/dotamini_split/labelTxt"
+new_label_file_dir = ""
+new_img_dir = "/home/gaochuan/object_detection/dataset/dota_mini/dotamini_split/new_images"
+
 label_names=["plane",
             "ship",
             "storage-tank",
@@ -27,7 +46,7 @@ label_names=["plane",
 
 def draw_poly_in_picture(image,pts=None,rect=None,color=(250,0,225),thickness=3):  
     if(pts is not None):
-        cv2.polylines(image,[pts],True,color,1)
+        cv2.polylines(image,[pts],True,color,3)
         #cv2.imshow("pts.jpg",image)
         #cv2.waitKey(0)
     if(rect is not None):
@@ -86,11 +105,11 @@ def bianli(img_file_dir,label_file_dir,new_label_file_dir,image_size,new_img_dir
             print("error: cannot find img file, ",img_file)
         image=cv2.imread(img_file)
         with open(label_file,'r') as f:
-            filename=new_label_file_dir+os.sep+os.path.basename(label_file)
+            #filename=new_label_file_dir+os.sep+os.path.basename(label_file)
             lines=f.readlines()
             for l in lines:
                 l=l.strip().split(' ')
-                assert len(l)==10\
+                assert len(l)==10
                 #filter difficult target,which is not a full rect.
                 if(int(l[-1])>0):
                     color=(0,255,255)
@@ -100,9 +119,9 @@ def bianli(img_file_dir,label_file_dir,new_label_file_dir,image_size,new_img_dir
                 l=l[0:-2]
                 #turn xyxy to xywha
                 rect=xyxy2rect(l)
-                draw_poly_in_picture(image=image,rect=rect,color=color,thickness=1)
+                draw_poly_in_picture(image=image,rect=rect,color=color,thickness=2)
                 rect=convert_rect(rect,img_size=image_size)
-                draw_poly_in_picture(image=image,rect=rect,color=(123,34,200),thickness=1)
+                draw_poly_in_picture(image=image,rect=rect,color=(123,34,200),thickness=2)
             cv2.imshow("pts.jpg",image)
             cv2.waitKey(0)
 
